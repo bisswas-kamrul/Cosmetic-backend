@@ -1,4 +1,5 @@
 const CetagoryList = require("../Moddel/CategoryShema");
+const cloudinary = require("../middlewareFloder/cloudinary");
 async function createCategory(req, res) {
   try {
     const { name, description } = req.body;
