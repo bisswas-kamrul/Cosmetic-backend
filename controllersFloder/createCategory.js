@@ -6,8 +6,6 @@ async function createCategory(req, res) {
 
     const duplicate = await CetagoryList.findOne({ name });
 
-    const result = await cloudinary.uploader.upload(req.file.path);
-
     if (duplicate) {
       return res.status(400).json({
         message: "Duplicate category",
@@ -17,7 +15,9 @@ async function createCategory(req, res) {
       return res.status(400).json({ message: "Image is required" });
     }
 
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    // const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     const category = new CetagoryList({
       name,
       description,
