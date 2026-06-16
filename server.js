@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
-  : ["https://cosmetic-frontend-theta.vercel.app", "https://cosmetic-dashboard-rho.vercel.app"];
+  : ["https://cosmetic-frontend-theta.vercel.app", "https://cosmetic-dashboard-eight.vercel.app"];
 
 if (!process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET is required");
