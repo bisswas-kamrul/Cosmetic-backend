@@ -19,6 +19,7 @@ const {
 } = require("../controllersFloder/notificationController");
 const UserDeleteContollar = require("../controllersFloder/UserDeleteContollar");
 const admin = require("../middlewareFloder/admin");
+const upload = require("../middlewareFloder/imgupload");
 const ForgotPasswordContollar = require("../controllersFloder/ForgotPasswordContollar");
 const ResetPasswordContollar = require("../controllersFloder/ResetPasswordContollar");
 const GetAllVendorController = require("../controllersFloder/GetAllVendorController");
@@ -34,7 +35,7 @@ userrouter.post("/login", loginUser);
 userrouter.post("/ForgotPassword", ForgotPasswordContollar);
 userrouter.post("/ResetPassword", ResetPasswordContollar);
 userrouter.get("/profile", protect, profileController);
-userrouter.put("/update-profile", protect, updateProfileController);
+userrouter.put("/update-profile", protect, upload.single("avatar"), updateProfileController);
 userrouter.post("/change-password", protect, changePasswordController);
 userrouter.get("/wishlist", protect, getWishlistController);
 userrouter.delete("/wishlist/:productId", protect, removeWishlistController);
