@@ -4,13 +4,20 @@ const EmailVerifacation = require("../RegexFloder/EmailVerifacation.js");
 const bcrypt = require("bcrypt");
 async function SingupController(req, res) {
   try {
-    const { name, lastName, email, password, role, storeName, phone, address } = req.body;
+    const { name, lastName, email, password, role, storeName, phone, address } =
+      req.body;
 
     if (!name || !lastName || !email || !password) {
       return res.json({
         message: "Fill in all the blanks.",
       });
     }
+
+    // Check if an admin already exists
+    const adminExists = await UserList.findOne({ role: "admin" });
+
+    // Set role
+    const role = adminExists ? "customer" : "admin";
 
     const cheklist = await UserList.findOne({
       email: email.toLowerCase(),
