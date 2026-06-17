@@ -11,36 +11,33 @@ async function createNotification(userId, title, message, type = "system") {
 }
 
 async function updateProfileController(req, res) {
-  try {
+try {
     const { name, lastName, phone, address } = req.body;
+
     const updateData = {};
 
     if (name) updateData.name = name.trim();
     if (lastName) updateData.lastName = lastName.trim();
-    if (phone !== undefined) updateData.phone = phone.trim();
-    if (address !== undefined) updateData.address = address.trim();
+    if (phone) updateData.phone = phone.trim();
+    if (address) updateData.address = address.trim();
 
+    // avatar upload
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path);
       fs.unlinkSync(req.file.path);
       updateData.avatar = result.secure_url;
     }
 
-    const user = await UserList.findByIdAndUpdate(req.user._id, updateData, {
-      new: true,
-      runValidators: true,
-    }).select(publicUserFields);
-
-    await createNotification(
+    const user = await UserList.findByIdAndUpdate(
       req.user._id,
-      "Profile updated",
-      "Your profile information was updated successfully.",
-      "account",
+      updateData,
+      { new: true }
+    ).select(
+      "_id name lastName email avatar phone address role status"
     );
 
     res.json({
       success: true,
-      message: "Profile updated successfully",
       user,
     });
   } catch (error) {
