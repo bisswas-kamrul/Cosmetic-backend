@@ -1,10 +1,18 @@
 const UserList = require("../Moddel/Usershema");
-async function UserContollar (req ,res) {
-     try {
-    const user = await UserList.find({},"_id name lastName email"); // সব user আনবে
+
+async function UserContollar(req, res) {
+  try {
+    const user = await UserList.find(
+      {},
+      "_id name lastName email role status"
+    );
+
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 }
-module.exports = UserContollar
+
+module.exports = UserContollar;
