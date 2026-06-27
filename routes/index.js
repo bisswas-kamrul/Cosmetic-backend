@@ -6,6 +6,7 @@ const categoryrouter = require("./category");
 const Productrouter = require("./Product");
 const SubscriberRouter = require("./Subscriber");
 const reviewRouter = require("./reviewRoutes");
+const chatbotRouter = require("./chatbotRoutes");
 
 
 
@@ -18,4 +19,5 @@ router.use("/",Paymentrouter)
 router.use("/",categoryrouter)
 router.use("/",SubscriberRouter)
 router.use("/",reviewRouter)
+router.use("/",chatbotRouter)
 module.exports = router;
