@@ -26,6 +26,12 @@ const GetAllVendorController = require("../controllersFloder/GetAllVendorControl
 const ApproveVendorController = require("../controllersFloder/ApproveVendorController");
 const UpdateVendorStatusController = require("../controllersFloder/UpdateVendorStatusController");
 const DashboardStatsController = require("../controllersFloder/DashboardStatsController");
+const {
+  aiChatController,
+  getAiSettingsController,
+  updateAiSettingsController,
+} = require("../controllers/controllersFloder/aiChatController");
+const aiRateLimiter = require("../middlewareFloder/aiRateLimiter");
 const userrouter = express.Router();
 
 userrouter.post("/signup", SingupController);
@@ -59,6 +65,9 @@ userrouter.put(
   UpdateVendorStatusController,
 );
 userrouter.get("/dashboard-stats", protect, admin, DashboardStatsController);
+userrouter.get("/ai/settings", getAiSettingsController);
+userrouter.put("/ai/settings", protect, admin, updateAiSettingsController);
+userrouter.post("/ai/chat", aiRateLimiter, aiChatController);
 userrouter.get("/admin", protect, admin, (req, res) => {
   res.json({
     success: true,
