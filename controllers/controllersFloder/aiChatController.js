@@ -60,12 +60,18 @@ const updateAiSettingsController = async (req, res) => {
       return res.status(403).json({ message: "Admin access required" });
     }
 
-    const { enabled, systemPrompt, welcomeMessage, suggestedQuestions } = req.body || {};
+    const { enabled, systemPrompt, welcomeMessage, suggestedQuestions } =
+      req.body || {};
     const settings = await getOrCreateSettings();
 
-    settings.enabled = typeof enabled === "boolean" ? enabled : settings.enabled;
-    settings.systemPrompt = typeof systemPrompt === "string" ? systemPrompt : settings.systemPrompt;
-    settings.welcomeMessage = typeof welcomeMessage === "string" ? welcomeMessage : settings.welcomeMessage;
+    settings.enabled =
+      typeof enabled === "boolean" ? enabled : settings.enabled;
+    settings.systemPrompt =
+      typeof systemPrompt === "string" ? systemPrompt : settings.systemPrompt;
+    settings.welcomeMessage =
+      typeof welcomeMessage === "string"
+        ? welcomeMessage
+        : settings.welcomeMessage;
     settings.suggestedQuestions = Array.isArray(suggestedQuestions)
       ? suggestedQuestions.filter(Boolean).slice(0, 8)
       : settings.suggestedQuestions;
@@ -122,10 +128,17 @@ const buildWebsiteContext = async () => {
   const categories = await CategoryList.find({}).limit(6).lean();
 
   return {
-    shippingInfo: "Shipping is available for supported regions. Delivery times vary but are usually shared at checkout.",
-    returnPolicy: "Returns are accepted for unused items within the allowed return window and must follow the return instructions provided with the order.",
-    paymentMethods: ["Card payments", "Cash on delivery", "Digital wallet payments"],
-    orderProcess: "Customers add items to the cart, review the order, complete checkout, and receive order updates after confirmation.",
+    shippingInfo:
+      "Shipping is available for supported regions. Delivery times vary but are usually shared at checkout.",
+    returnPolicy:
+      "Returns are accepted for unused items within the allowed return window and must follow the return instructions provided with the order.",
+    paymentMethods: [
+      "Card payments",
+      "Cash on delivery",
+      "Digital wallet payments",
+    ],
+    orderProcess:
+      "Customers add items to the cart, review the order, complete checkout, and receive order updates after confirmation.",
     faq: [
       "You can track your order after it is confirmed and shipped.",
       "Popular categories include skincare, makeup, and beauty essentials.",
@@ -134,7 +147,12 @@ const buildWebsiteContext = async () => {
   };
 };
 
-const generateFallbackReply = async (message, products, settings, websiteContext) => {
+const generateFallbackReply = async (
+  message,
+  products,
+  settings,
+  websiteContext,
+) => {
   const lowerValue = message.toLowerCase();
 
   if (lowerValue.includes("shipping")) {
@@ -153,7 +171,12 @@ const generateFallbackReply = async (message, products, settings, websiteContext
     return websiteContext.orderProcess;
   }
 
-  if (lowerValue.includes("recommend") || lowerValue.includes("similar") || lowerValue.includes("compare") || lowerValue.includes("choose")) {
+  if (
+    lowerValue.includes("recommend") ||
+    lowerValue.includes("similar") ||
+    lowerValue.includes("compare") ||
+    lowerValue.includes("choose")
+  ) {
     if (products.length) {
       const names = products.map((product) => product.name).join(", ");
       return `Here are a few options I found: ${names}. I can help compare their features or suggest the best choice for your budget.`;
@@ -169,7 +192,12 @@ const generateFallbackReply = async (message, products, settings, websiteContext
     }
   }
 
-  if (lowerValue.includes("latest") || lowerValue.includes("new") || lowerValue.includes("best-selling") || lowerValue.includes("best selling")) {
+  if (
+    lowerValue.includes("latest") ||
+    lowerValue.includes("new") ||
+    lowerValue.includes("best-selling") ||
+    lowerValue.includes("best selling")
+  ) {
     if (products.length) {
       const names = products.map((product) => product.name).join(", ");
       return `Here are the currently available options: ${names}.`;
@@ -228,11 +256,17 @@ const aiChatController = async (req, res) => {
     const message = sanitizeInput(req.body?.message);
 
     if (!message) {
-      return res.status(400).json({ message: "Please enter a question first." });
+      return res
+        .status(400)
+        .json({ message: "Please enter a question first." });
     }
 
     if (isPromptInjection(message)) {
-      return res.status(400).json({ message: "I can only assist with this website and its products." });
+      return res
+        .status(400)
+        .json({
+          message: "I can only assist with this website and its products.",
+        });
     }
 
     const settings = await getOrCreateSettings();
@@ -246,14 +280,18 @@ const aiChatController = async (req, res) => {
 
     if (isUnrelatedTopic(message)) {
       return res.json({
-        reply: "I can only help with this website's products, shipping, returns, payments, and order process.",
+        reply:
+          "I can only help with this website's products, shipping, returns, payments, and order process.",
         usedFallback: true,
       });
     }
 
     const websiteContext = await buildWebsiteContext();
     let products = [];
-    const productIntent = /product|products|price|stock|description|similar|compare|recommend|category|categories|budget|best|latest|new|feature|features|choose|selling/i.test(message);
+    const productIntent =
+      /product|products|price|stock|description|similar|compare|recommend|category|categories|budget|best|latest|new|feature|features|choose|selling/i.test(
+        message,
+      );
 
     if (productIntent) {
       products = await findRelevantProducts(message);
@@ -270,7 +308,12 @@ const aiChatController = async (req, res) => {
     }
 
     if (!reply) {
-      reply = await generateFallbackReply(message, products, settings, websiteContext);
+      reply = await generateFallbackReply(
+        message,
+        products,
+        settings,
+        websiteContext,
+      );
       usedFallback = true;
     }
 
@@ -286,7 +329,9 @@ const aiChatController = async (req, res) => {
     });
   } catch (error) {
     console.error("AI chat controller error", error);
-    res.status(500).json({ message: "Unable to process your request right now." });
+    res
+      .status(500)
+      .json({ message: "Unable to process your request right now." });
   }
 };
 

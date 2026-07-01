@@ -38,9 +38,14 @@ const isUnrelatedTopic = (value) => {
     "religion",
   ];
 
-  const hasWebsiteTerms = /product|price|stock|shipping|return|order|payment|category|coupon|wishlist|checkout|description/i.test(lowerValue);
+  const hasWebsiteTerms =
+    /product|price|stock|shipping|return|order|payment|category|coupon|wishlist|checkout|description/i.test(
+      lowerValue,
+    );
 
-  return unrelatedTerms.some((term) => lowerValue.includes(term)) && !hasWebsiteTerms;
+  return (
+    unrelatedTerms.some((term) => lowerValue.includes(term)) && !hasWebsiteTerms
+  );
 };
 
 const extractBudget = (value) => {
@@ -55,7 +60,10 @@ const extractBudget = (value) => {
 const extractProductKeywords = (value) => {
   const cleaned = value
     .toLowerCase()
-    .replace(/what|show|find|tell|me|about|the|a|an|for|can|you|help|with|please|recommend|compare|latest|best|selling|under|budget|price|stock|product|products|item|items|order|shipping|return|payment|category|categories|checkout|wishlist|coupon/gi, " ")
+    .replace(
+      /what|show|find|tell|me|about|the|a|an|for|can|you|help|with|please|recommend|compare|latest|best|selling|under|budget|price|stock|product|products|item|items|order|shipping|return|payment|category|categories|checkout|wishlist|coupon/gi,
+      " ",
+    )
     .replace(/[^a-z0-9\s]/g, " ")
     .trim();
 
@@ -69,7 +77,9 @@ const buildProductContext = (products) => {
 
   return products
     .map((product) => {
-      const description = product.description ? product.description.slice(0, 140) : "No description provided";
+      const description = product.description
+        ? product.description.slice(0, 140)
+        : "No description provided";
       return `- ${product.name}: price $${product.price}, stock ${product.stock}, description: ${description}`;
     })
     .join("\n");

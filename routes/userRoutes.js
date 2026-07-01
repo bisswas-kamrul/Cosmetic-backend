@@ -41,7 +41,12 @@ userrouter.post("/login", loginUser);
 userrouter.post("/ForgotPassword", ForgotPasswordContollar);
 userrouter.post("/ResetPassword", ResetPasswordContollar);
 userrouter.get("/profile", protect, profileController);
-userrouter.put("/update-profile", protect, upload.single("avatar"), updateProfileController);
+userrouter.put(
+  "/update-profile",
+  protect,
+  upload.single("avatar"),
+  updateProfileController,
+);
 userrouter.post("/change-password", protect, changePasswordController);
 userrouter.get("/wishlist", protect, getWishlistController);
 userrouter.delete("/wishlist/:productId", protect, removeWishlistController);
